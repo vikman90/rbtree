@@ -1,4 +1,4 @@
-CFLAGS = -O2 -g -pipe -Wall -Wextra -Wpedantic
+CFLAGS = -O2 -pipe -Wall -Wextra -Wpedantic
 TARGET = rbtree
 
 .PHONY: all clean

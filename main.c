@@ -63,7 +63,10 @@ int main(int argc, char ** argv) {
     clock_gettime(CLOCK_MONOTONIC, &ts_start);
 
     for (int i = 0; i < n; i++) {
-        rbtree_insert(tree, keys[i], keys[i]);
+        if (rbtree_insert(tree, keys[i], keys[i]) == -1) {
+            fprintf(stderr, "ERROR: rbtree_insert()\n");
+            return EXIT_FAILURE;
+        }
     }
 
     struct timespec ts_end;
@@ -78,7 +81,7 @@ int main(int argc, char ** argv) {
     for (int i = 0; i < n; i++) {
         int32_t r;
         random_r(&data, &r);
-        r = r >= 0 ? r % n : -r % n;
+        r %= n;
 
         clock_gettime(CLOCK_MONOTONIC, &ts_start);
         rbtree_get(tree, keys[r]);
@@ -87,9 +90,9 @@ int main(int argc, char ** argv) {
     }
 
     printf("Search: %.3f ms\n", lapse * 1e3);
-    // printf("%.3f\n", lapse * 1e3);
+    // printf("%.3f", lapse * 1e3);
 
-    // rbtree_print_keys(tree);
+    rbtree_print_keys(tree);
 
     matrix_free(keys, n);
     rbtree_destroy(tree);
