@@ -64,7 +64,7 @@ int main(int argc, char ** argv) {
     clock_gettime(CLOCK_MONOTONIC, &ts_start);
 
     for (int i = 0; i < n; i++) {
-        if (rbtree_insert(tree, keys[i], keys[i]) == -1) {
+        if (rbtree_insert(tree, keys[i], keys[i]) == NULL) {
             fprintf(stderr, "ERROR: rbtree_insert()\n");
             return EXIT_FAILURE;
         }
@@ -79,6 +79,8 @@ int main(int argc, char ** argv) {
     int black_depth = rbtree_black_depth(tree);
     assert(black_depth != -1);
     printf("Black depth: %d\n", black_depth);
+    printf("Minimum: %s\n", rbtree_minimum(tree));
+    printf("Maximum: %s\n", rbtree_maximum(tree));
 
     // Search ------------------------------------------------------------------
 

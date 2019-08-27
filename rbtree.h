@@ -12,31 +12,147 @@
 #ifndef RBTREE_H
 #define RBTREE_H
 
+/// Possible colors of a red-black tree
 typedef enum rb_color { RB_RED, RB_BLACK } rb_color;
 
+/// Red-black tree node
 typedef struct rb_node {
-    char * key;
-    void * value;
-    rb_color color;
-    struct rb_node * parent;
-    struct rb_node * left;
-    struct rb_node * right;
+    char * key;                 ///< Node key
+    void * value;               ///< Pointer to value
+    rb_color color;             ///< Node color
+    struct rb_node * parent;    ///< Pointer to parent node
+    struct rb_node * left;      ///< Pointer to left child
+    struct rb_node * right;     ///< Pointer to right child
 } rb_node;
 
+/**
+ * @brief Red-black tree abstract data type
+ *
+ * A red-black tree is a self-balanced binary search tree.
+ *
+ * It supports O(log n) insertion, deletion and search.
+ */
 typedef struct rb_tree {
-    rb_node * root;
+    rb_node * root;             ///< Pointer to root node.
 } rb_tree;
 
+/**
+ * @brief Create a red-black tree
+ *
+ * @return Pointer to an empty tree.
+ */
+
 rb_tree * rbtree_init();
+
+/**
+ * @brief Free a red-black tree
+ * @post The tree is destroyed, including keys. Values are not freed.
+ * @param tree Pointer to a red-black tree.
+ */
+
 void rbtree_destroy(rb_tree * tree);
-int rbtree_insert(rb_tree * tree, const char * key, void * value);
+
+/**
+ * @brief Insert a key-value in the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param key Data key, used for ordering.
+ * @param value Data value.
+ * @return Pointer to value, on success.
+ * @retval NULL Key already exists in the tree.
+ */
+
+void * rbtree_insert(rb_tree * tree, const char * key, void * value);
+
+/**
+ * @brief Retrieve a value from the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param key Data key (search criteria).
+ * @return Pointer to data value, if found.
+ * @retval NULL Key not found.
+ */
+
 void * rbtree_get(rb_tree * tree, const char * key);
+
+/**
+ * @brief Remove a value from the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param key Data key.
+ * @return Pointer to value removed, on success.
+ * @retval NULL Key not in the tree.
+ */
+
 void * rbtree_delete(rb_tree * tree, const char * key);
-void * rbtree_minimum(rb_tree * tree);
-void * rbtree_maximum(rb_tree * tree);
+
+/**
+ * @brief Get the minimum key in the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @return Minimum key in the tree.
+ * @retval NULL The tree is empty.
+ */
+
+char * rbtree_minimum(rb_tree * tree);
+
+/**
+ * @brief Get the maximum key in the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @return Maximum key in the tree.
+ * @retval NULL The tree is empty.
+ */
+
+char * rbtree_maximum(rb_tree * tree);
+
+/**
+ * @brief Get all the keys in the tree
+ *
+ * Retrieve all the keys, ordered alphabetically (inorder traversal).
+ *
+ * @param tree
+ * @return Null-terminated array of keys.
+ */
+
 char ** rbtree_keys(rb_tree * tree);
+
+/**
+ * @brief Get all the keys from the tree within a range
+ *
+ * Retrieve all the keys in the closed range [min, max], ordered alphabetically
+ * (inorder traversal).
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param min Minimum key.
+ * @param max Maximum key.
+ * @return Null-terminated array of keys.
+ */
+
 char ** rbtree_range(rb_tree * tree, const char * min, const char * max);
+
+/**
+ * @brief Get the black depth of a tree
+ *
+ * The black depth of a red-black tree is the number of black nodes from the
+ * root to any leaf, including null leafs (that are black).
+ *
+ * This function is test-oriented.
+ *
+ * @param tree Pointer to a red-black tree.
+ * @return Number of black nodes from the root.
+ * @retval -1 The tree is unbalanced. This would mean a bug.
+ */
+
 int rbtree_black_depth(rb_tree * tree);
+
+/**
+ * @brief Get the size of the tree
+ *
+ * @param tree Pointer to a red-black tree.
+ * @return unsigned Number of elements in the tree.
+ */
+
 unsigned rbtree_size(rb_tree * tree);
 
 #endif
