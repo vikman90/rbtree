@@ -92,7 +92,22 @@ int main(int argc, char ** argv) {
     printf("Search: %.3f ms\n", lapse * 1e3);
     // printf("%.3f", lapse * 1e3);
 
+    rbtree_assert(tree);
+
+    // Inorder iteration -------------------------------------------------------
+
     rbtree_print_keys(tree);
+
+    // Deletion ----------------------------------------------------------------
+
+    for (int i = 0; i < n; i++) {
+        if (rbtree_delete(tree, keys[i]) == NULL) {
+            fprintf(stderr, "ERROR: rbtree_delete()\n");
+            return EXIT_FAILURE;
+        }
+
+        rbtree_assert(tree);
+    }
 
     matrix_free(keys, n);
     rbtree_destroy(tree);
