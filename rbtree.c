@@ -473,7 +473,7 @@ void * rbtree_insert(rb_tree * tree, const char * key, void * value) {
 }
 // Retrieve a value from the tree
 
-void * rbtree_get(rb_tree * tree, const char * key) {
+void * rbtree_get(const rb_tree * tree, const char * key) {
     rb_node * node = rb_get(tree->root, key);
     return node ? node->value : NULL;
 }
@@ -525,19 +525,19 @@ void * rbtree_delete(rb_tree * tree, const char * key) {
 
 // Get the minimum key in the tree
 
-char * rbtree_minimum(rb_tree * tree) {
+const char * rbtree_minimum(const rb_tree * tree) {
     return tree->root ? rb_min(tree->root)->key : NULL;
 }
 
 // Get the maximum key in the tree
 
-char * rbtree_maximum(rb_tree * tree) {
+const char * rbtree_maximum(const rb_tree * tree) {
     return tree->root ? rb_max(tree->root)->key : NULL;
 }
 
 // Get all the keys in the tree
 
-char ** rbtree_keys(rb_tree * tree) {
+char ** rbtree_keys(const rb_tree * tree) {
     unsigned size = 0;
     char ** array = malloc(sizeof(char *));
 
@@ -551,7 +551,7 @@ char ** rbtree_keys(rb_tree * tree) {
 
 // Get all the keys from the tree within a range
 
-char ** rbtree_range(rb_tree * tree, const char * min, const char * max) {
+char ** rbtree_range(const rb_tree * tree, const char * min, const char * max) {
     unsigned size = 0;
     char ** array = malloc(sizeof(char *));
 
@@ -565,7 +565,7 @@ char ** rbtree_range(rb_tree * tree, const char * min, const char * max) {
 
 // Get the black depth of a tree
 
-int rbtree_black_depth(rb_tree * tree) {
+int rbtree_black_depth(const rb_tree * tree) {
     if (tree->root == NULL) {
         return 0;
     }
@@ -582,12 +582,12 @@ int rbtree_black_depth(rb_tree * tree) {
 
 // Get the size of the tree
 
-unsigned rbtree_size(rb_tree * tree) {
+unsigned rbtree_size(const rb_tree * tree) {
     return tree->root ? rb_size(tree->root) : 0;
 }
 
 // Check whether the tree is empty
 
-int rbtree_empty(rb_tree * tree) {
+int rbtree_empty(const rb_tree * tree) {
     return tree->root == NULL;
 }
