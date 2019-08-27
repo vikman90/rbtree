@@ -35,6 +35,6 @@ void * rbtree_delete(rb_tree * tree, const char * key);
 void * rbtree_minimum(rb_tree * tree);
 void * rbtree_maximum(rb_tree * tree);
 void rbtree_print_keys(rb_tree * tree);
-void rbtree_assert(rb_tree * tree);
+int rbtree_black_depth(rb_tree * tree);
 
 #endif

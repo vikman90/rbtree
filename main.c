@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <time.h>
 #include "rbtree.h"
 
@@ -74,6 +75,10 @@ int main(int argc, char ** argv) {
     printf("Insert: %.3f ms\n", time_diff(&ts_start, &ts_end) * 1e3);
     // printf("%.3f;", time_diff(&ts_start, &ts_end) * 1e3);
 
+    int black_depth = rbtree_black_depth(tree);
+    assert(black_depth != -1);
+    printf("Black depth: %d\n", black_depth);
+
     // Search ------------------------------------------------------------------
 
     double lapse = 0;
@@ -92,8 +97,6 @@ int main(int argc, char ** argv) {
     printf("Search: %.3f ms\n", lapse * 1e3);
     // printf("%.3f", lapse * 1e3);
 
-    rbtree_assert(tree);
-
     // Inorder iteration -------------------------------------------------------
 
     rbtree_print_keys(tree);
@@ -106,7 +109,7 @@ int main(int argc, char ** argv) {
             return EXIT_FAILURE;
         }
 
-        rbtree_assert(tree);
+        assert(rbtree_black_depth(tree) != -1);
     }
 
     matrix_free(keys, n);
