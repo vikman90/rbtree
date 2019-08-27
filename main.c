@@ -100,7 +100,17 @@ int main(int argc, char ** argv) {
 
     // Inorder iteration -------------------------------------------------------
 
-    rbtree_print_keys(tree);
+    {
+        char ** k2 = rbtree_keys(tree);
+        int i;
+
+        for (i = 0; k2[i] != NULL; i++) {
+            printf("[%d] = %s\n", i, k2[i]);
+        };
+
+        assert(i == n);
+        matrix_free(k2, n);
+    }
 
     // Deletion ----------------------------------------------------------------
 

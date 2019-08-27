@@ -239,16 +239,19 @@ static void rb_balance_delete(rb_tree * tree, rb_node * node, rb_node * parent) 
     }
 }
 
-static void rb_print_keys(rb_node * node) {
+static char ** rb_keys(rb_node * node, char ** array, unsigned * size) {
     if (node->left) {
-        rb_print_keys(node->left);
+        array = rb_keys(node->left, array, size);
     }
 
-    printf("%s\n", node->key);
+    array = realloc(array, sizeof(char *) * (*size + 2));
+    array[(*size)++] = strdup(node->key);
 
     if (node->right) {
-        rb_print_keys(node->right);
+        array = rb_keys(node->right, array, size);
     }
+
+    return array;
 }
 
 static int rb_black_depth(rb_node * node) {
@@ -369,10 +372,16 @@ void * rbtree_maximum(rb_tree * tree) {
     return tree->root ? rb_max(tree->root) : NULL;
 }
 
-void rbtree_print_keys(rb_tree * tree) {
+char ** rbtree_keys(rb_tree * tree) {
+    unsigned size = 0;
+    char ** array = malloc(sizeof(char *));
+
     if (tree->root) {
-        rb_print_keys(tree->root);
+        array = rb_keys(tree->root, array, &size);
     }
+
+    array[size] = NULL;
+    return array;
 }
 
 int rbtree_black_depth(rb_tree * tree) {
