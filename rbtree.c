@@ -254,6 +254,29 @@ static char ** rb_keys(rb_node * node, char ** array, unsigned * size) {
     return array;
 }
 
+static char ** rb_range(rb_node * node, const char * min, const char * max, char ** array, unsigned * size) {
+    int cmp_min = strcmp(node->key, min);
+    int cmp_max = strcmp(node->key, max);
+
+    if (node->left && cmp_min > 0) {
+        // node > min
+        array = rb_range(node->left, min, max, array, size);
+    }
+
+    if (cmp_min >= 0 && cmp_max <= 0) {
+        // min <= node <= max
+        array = realloc(array, sizeof(char *) * (*size + 2));
+        array[(*size)++] = strdup(node->key);
+    }
+
+    if (node->right && cmp_max < 0) {
+        // node < min
+        array = rb_range(node->right, min, max, array, size);
+    }
+
+    return array;
+}
+
 static int rb_black_depth(rb_node * node) {
     if (node == NULL) {
         return 1;
@@ -378,6 +401,18 @@ char ** rbtree_keys(rb_tree * tree) {
 
     if (tree->root) {
         array = rb_keys(tree->root, array, &size);
+    }
+
+    array[size] = NULL;
+    return array;
+}
+
+char ** rbtree_range(rb_tree * tree, const char * min, const char * max) {
+    unsigned size = 0;
+    char ** array = malloc(sizeof(char *));
+
+    if (tree->root) {
+        array = rb_range(tree->root, min, max, array, &size);
     }
 
     array[size] = NULL;
