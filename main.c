@@ -75,6 +75,7 @@ int main(int argc, char ** argv) {
     printf("Insert: %.3f ms\n", time_diff(&ts_start, &ts_end) * 1e3);
     // printf("%.3f;", time_diff(&ts_start, &ts_end) * 1e3);
 
+    printf("Tree size: %d\n", rbtree_size(tree));
     int black_depth = rbtree_black_depth(tree);
     assert(black_depth != -1);
     printf("Black depth: %d\n", black_depth);

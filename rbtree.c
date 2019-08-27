@@ -266,6 +266,10 @@ static int rb_black_depth(rb_node * node) {
     return d_left + (node->color == RB_BLACK);
 }
 
+unsigned rb_size(rb_node * node) {
+    return (node->left ? rb_size(node->left) : 0) + 1 + (node->right ? rb_size(node->right) : 0);
+}
+
 /* Public functions ***********************************************************/
 
 rb_tree * rbtree_init() {
@@ -384,4 +388,8 @@ int rbtree_black_depth(rb_tree * tree) {
     int d_right = rb_black_depth(tree->root->right);
 
     return (d_left == -1 || d_right == -1 || d_left != d_right) ? -1 : d_left;
+}
+
+unsigned rbtree_size(rb_tree * tree) {
+    return tree->root ? rb_size(tree->root) : 0;
 }

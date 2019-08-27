@@ -36,5 +36,6 @@ void * rbtree_minimum(rb_tree * tree);
 void * rbtree_maximum(rb_tree * tree);
 void rbtree_print_keys(rb_tree * tree);
 int rbtree_black_depth(rb_tree * tree);
+unsigned rbtree_size(rb_tree * tree);
 
 #endif
