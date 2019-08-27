@@ -155,4 +155,13 @@ int rbtree_black_depth(rb_tree * tree);
 
 unsigned rbtree_size(rb_tree * tree);
 
+/**
+ * @brief Check whether the tree is empty.
+ *
+ * @param tree Pointer to a red-black tree.
+ * @retval 1 The tree is empty.
+ * @retval 0 The tree is not empty.
+ */
+int rbtree_empty(rb_tree * tree);
+
 #endif

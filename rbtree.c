@@ -585,3 +585,9 @@ int rbtree_black_depth(rb_tree * tree) {
 unsigned rbtree_size(rb_tree * tree) {
     return tree->root ? rb_size(tree->root) : 0;
 }
+
+// Check whether the tree is empty
+
+int rbtree_empty(rb_tree * tree) {
+    return tree->root == NULL;
+}

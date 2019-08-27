@@ -45,6 +45,8 @@ int main(int argc, char ** argv) {
     // Create <N> random keys
 
     rb_tree * tree = rbtree_init();
+    assert(rbtree_empty(tree));
+
     int n = atoi(argv[1]);
     char ** keys = NULL;
 
