@@ -55,7 +55,7 @@ int main(int argc, char ** argv) {
     rbtree_set_dispose(tree, free);
 
     int n = atoi(argv[1]);
-    char ** keys = NULL;
+    char ** keys = calloc(n, sizeof(char *));
 
     for (int i = 0; i < n; i++) {
         char buffer[64];
@@ -63,7 +63,6 @@ int main(int argc, char ** argv) {
         random_r(&data, &r);
         snprintf(buffer, sizeof(buffer), "%d", r);
 
-        keys = realloc(keys, sizeof(char *) * (i + 1));
         keys[i] = strdup(buffer);
     }
 
@@ -109,6 +108,19 @@ int main(int argc, char ** argv) {
     printf("Search: %.3f ms\n", lapse * 1e3);
     // printf("%.3f", lapse * 1e3);
 
+    // Replace all values ------------------------------------------------------
+
+    char ** reverse = calloc(n, sizeof(char *));
+
+    for (int i = 0; i < n; i++) {
+        reverse[i] = strdup(keys[n - i - 1]);
+
+        if (rbtree_replace(tree, reverse[i], reverse[i]) == NULL) {
+            fprintf(stderr, "ERROR: rbtree_replace()\n");
+            return EXIT_FAILURE;
+        }
+    }
+
     // Inorder iteration -------------------------------------------------------
 
     printf("All values:\n");
@@ -141,7 +153,7 @@ int main(int argc, char ** argv) {
     // Deletion ----------------------------------------------------------------
 
     for (int i = 0; i < n; i++) {
-        if (rbtree_delete(tree, keys[i]) == 0) {
+        if (rbtree_delete(tree, reverse[i]) == 0) {
             fprintf(stderr, "ERROR: rbtree_delete()\n");
             return EXIT_FAILURE;
         }
@@ -150,6 +162,7 @@ int main(int argc, char ** argv) {
     }
 
     free(keys);
+    free(reverse);
     rbtree_destroy(tree);
     return EXIT_SUCCESS;
 }

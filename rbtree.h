@@ -87,6 +87,19 @@ void rbtree_set_dispose(rb_tree * tree, void (*dispose)(void *));
 void * rbtree_insert(rb_tree * tree, const char * key, void * value);
 
 /**
+ * @brief Update the value of an existing key
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param key Data key.
+ * @param value Data value.
+ * @post The old value is disposed if a dispose function was defined.
+ * @return Pointer to value, on success.
+ * @retval NULL Key not found.
+ */
+
+void * rbtree_replace(rb_tree * tree, const char * key, void * value);
+
+/**
  * @brief Retrieve a value from the tree
  *
  * @param tree Pointer to a red-black tree.
