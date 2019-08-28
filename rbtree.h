@@ -86,11 +86,11 @@ void * rbtree_get(const rb_tree * tree, const char * key);
  *
  * @param tree Pointer to a red-black tree.
  * @param key Data key.
- * @return Pointer to value removed, on success.
- * @retval NULL Key not in the tree.
+ * @retval 1 The element was found and deleted.
+ * @retval 0 Key not in the tree.
  */
 
-void * rbtree_delete(rb_tree * tree, const char * key);
+int rbtree_delete(rb_tree * tree, const char * key);
 
 /**
  * @brief Get the minimum key in the tree

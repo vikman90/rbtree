@@ -140,7 +140,7 @@ int main(int argc, char ** argv) {
     // Deletion ----------------------------------------------------------------
 
     for (int i = 0; i < n; i++) {
-        if (rbtree_delete(tree, keys[i]) == NULL) {
+        if (rbtree_delete(tree, keys[i]) == 0) {
             fprintf(stderr, "ERROR: rbtree_delete()\n");
             return EXIT_FAILURE;
         }

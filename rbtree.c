@@ -486,11 +486,11 @@ void * rbtree_get(const rb_tree * tree, const char * key) {
 
 // Remove a value from the tree
 
-void * rbtree_delete(rb_tree * tree, const char * key) {
+int rbtree_delete(rb_tree * tree, const char * key) {
     rb_node * node = rb_get(tree->root, key);
 
     if (node == NULL) {
-        return NULL;
+        return 0;
     }
 
     // Succesor: node that will be actually deleted
@@ -521,12 +521,10 @@ void * rbtree_delete(rb_tree * tree, const char * key) {
         rb_balance_delete(tree, t, s->parent);
     }
 
-    void * value = s->value;
-
     free(s->key);
     free(s);
 
-    return value;
+    return 1;
 }
 
 // Get the minimum key in the tree
