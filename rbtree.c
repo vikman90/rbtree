@@ -42,20 +42,26 @@ static rb_node * rb_init(const char * key, void * value) {
 
 /**
  * @brief Free a red-black subtree
- * @post The subtree is destroyed, including keys. Values are not freed.
  * @param node Pointer to a red-black tree node.
+ * @param dispose Pointer to function to dispose an element.
+ * @post If dispose is not NULL, the value is freed.
  */
 
-static void rb_destroy(rb_node * node) {
-    if (node->left) {
-        rb_destroy(node->left);
+static void rb_destroy(rb_node * node, void (*dispose)(void *)) {
+    if (node->left != NULL) {
+        rb_destroy(node->left, dispose);
     }
 
-    if (node->right) {
-        rb_destroy(node->right);
+    if (node->right != NULL) {
+        rb_destroy(node->right, dispose);
     }
 
     free(node->key);
+
+    if (node->value != NULL && dispose != NULL) {
+        dispose(node->value);
+    }
+
     free(node);
 }
 
@@ -144,7 +150,7 @@ static void rb_rotate_left(rb_tree * tree, rb_node * node) {
         }
     }
 
-    if (t->left) {
+    if (t->left != NULL) {
         t->left->parent = node;
     }
 
@@ -174,7 +180,7 @@ static void rb_rotate_right(rb_tree * tree, rb_node * node) {
         }
     }
 
-    if (t->right) {
+    if (t->right != NULL) {
         t->right->parent = node;
     }
 
@@ -195,7 +201,7 @@ static void rb_balance_insert(rb_tree * tree, rb_node * node) {
     while (node->parent && node->parent->color == RB_RED) {
         rb_node * uncle = rb_uncle(node);
 
-        if (uncle && uncle->color == RB_RED) {
+        if (uncle != NULL && uncle->color == RB_RED) {
             node->parent->color = RB_BLACK;
             uncle->color = RB_BLACK;
             node->grandparent->color = RB_RED;
@@ -259,7 +265,7 @@ static void rb_balance_delete(rb_tree * tree, rb_node * node, rb_node * parent) 
                 parent = parent->parent;
 
             } else {
-                if (!sibling->right || sibling->right->color == RB_BLACK) {
+                if (sibling->right == NULL || sibling->right->color == RB_BLACK) {
                     // Case 3: Sibling is black, left nephew is red and right nephew is black
 
                     sibling->left->color = RB_BLACK;
@@ -296,7 +302,7 @@ static void rb_balance_delete(rb_tree * tree, rb_node * node, rb_node * parent) 
                 node = parent;
                 parent = parent->parent;
             } else {
-                if (!sibling->left || sibling->left->color == RB_BLACK) {
+                if (sibling->left == NULL || sibling->left->color == RB_BLACK) {
                     // Case 3b: Sibling is black, left nephew is red and right nephew is black
 
                     sibling->right->color = RB_BLACK;
@@ -317,7 +323,7 @@ static void rb_balance_delete(rb_tree * tree, rb_node * node, rb_node * parent) 
         }
     }
 
-    if (node) {
+    if (node != NULL) {
         node->color = RB_BLACK;
     }
 }
@@ -335,14 +341,14 @@ static void rb_balance_delete(rb_tree * tree, rb_node * node, rb_node * parent) 
  */
 
 static char ** rb_keys(rb_node * node, char ** array, unsigned * size) {
-    if (node->left) {
+    if (node->left != NULL) {
         array = rb_keys(node->left, array, size);
     }
 
     array = realloc(array, sizeof(char *) * (*size + 2));
     array[(*size)++] = strdup(node->key);
 
-    if (node->right) {
+    if (node->right != NULL) {
         array = rb_keys(node->right, array, size);
     }
 
@@ -367,7 +373,7 @@ static char ** rb_range(rb_node * node, const char * min, const char * max, char
     int cmp_min = strcmp(node->key, min);
     int cmp_max = strcmp(node->key, max);
 
-    if (node->left && cmp_min > 0) {
+    if (node->left != NULL && cmp_min > 0) {
         // node > min
         array = rb_range(node->left, min, max, array, size);
     }
@@ -378,7 +384,7 @@ static char ** rb_range(rb_node * node, const char * min, const char * max, char
         array[(*size)++] = strdup(node->key);
     }
 
-    if (node->right && cmp_max < 0) {
+    if (node->right != NULL && cmp_max < 0) {
         // node < min
         array = rb_range(node->right, min, max, array, size);
     }
@@ -439,11 +445,21 @@ rb_tree * rbtree_init() {
 // Free a red-black tree
 
 void rbtree_destroy(rb_tree * tree) {
-    if (tree->root) {
-        rb_destroy(tree->root);
+    if (tree == NULL) {
+        return;
+    }
+
+    if (tree->root != NULL) {
+        rb_destroy(tree->root, tree->dispose);
     }
 
     free(tree);
+}
+
+// Set free function to dispose elements
+
+void rbtree_set_dispose(rb_tree * tree, void (*dispose)(void *)) {
+    tree->dispose = dispose;
 }
 
 // Insert a key-value in the tree
@@ -458,8 +474,8 @@ void * rbtree_insert(rb_tree * tree, const char * key, void * value) {
         cmp = strcmp(key, t->key);
 
         if (cmp == 0) {
-            // Duplicate key
-            rb_destroy(node);
+            // Duplicate key. Do not dispose value.
+            rb_destroy(node, NULL);
             return NULL;
         }
     }
@@ -494,8 +510,8 @@ int rbtree_delete(rb_tree * tree, const char * key) {
     }
 
     // Succesor: node that will be actually deleted
-    rb_node * s = (node->left && node->right) ? rb_min(node->right) : node;
-    rb_node * t = (s->left) ? s->left : s->right;
+    rb_node * s = (node->left != NULL && node->right != NULL) ? rb_min(node->right) : node;
+    rb_node * t = (s->left != NULL) ? s->left : s->right;
 
     if (s->parent == NULL) {
         tree->root = t;
@@ -505,25 +521,28 @@ int rbtree_delete(rb_tree * tree, const char * key) {
         s->parent->right = t;
     }
 
-    if (t) {
+    if (t != NULL) {
         t->parent = s->parent;
+    }
+
+    free(node->key);
+
+    if (node->value && tree->dispose) {
+        tree->dispose(node->value);
     }
 
     if (node != s) {
         // Copy successor into node
-        free(node->key);
+
         node->key = s->key;
         node->value = s->value;
-        s->key = NULL;
     }
 
     if (s->color == RB_BLACK) {
         rb_balance_delete(tree, t, s->parent);
     }
 
-    free(s->key);
     free(s);
-
     return 1;
 }
 
@@ -545,7 +564,7 @@ char ** rbtree_keys(const rb_tree * tree) {
     unsigned size = 0;
     char ** array = malloc(sizeof(char *));
 
-    if (tree->root) {
+    if (tree->root != NULL) {
         array = rb_keys(tree->root, array, &size);
     }
 
@@ -559,7 +578,7 @@ char ** rbtree_range(const rb_tree * tree, const char * min, const char * max) {
     unsigned size = 0;
     char ** array = malloc(sizeof(char *));
 
-    if (tree->root) {
+    if (tree->root != NULL) {
         array = rb_range(tree->root, min, max, array, &size);
     }
 

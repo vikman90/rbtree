@@ -52,6 +52,7 @@ int main(int argc, char ** argv) {
 
     rb_tree * tree = rbtree_init();
     assert(rbtree_empty(tree));
+    rbtree_set_dispose(tree, free);
 
     int n = atoi(argv[1]);
     char ** keys = NULL;
@@ -148,7 +149,7 @@ int main(int argc, char ** argv) {
         assert(rbtree_black_depth(tree) != -1);
     }
 
-    matrix_free(keys, n);
+    free(keys);
     rbtree_destroy(tree);
     return EXIT_SUCCESS;
 }

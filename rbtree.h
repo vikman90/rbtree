@@ -39,7 +39,8 @@ typedef struct rb_node {
  * It supports O(log n) insertion, deletion and search.
  */
 typedef struct rb_tree {
-    rb_node * root;             ///< Pointer to root node.
+    rb_node * root;             ///< Pointer to root node
+    void (*dispose)(void *);    ///< Pointer to function to dispose an element
 } rb_tree;
 
 /**
@@ -52,11 +53,26 @@ rb_tree * rbtree_init();
 
 /**
  * @brief Free a red-black tree
- * @post The tree is destroyed, including keys. Values are not freed.
+ *
+ * If tree is NULL, no operation is performed.
+ *
+ * @post The tree is destroyed, including keys and values.
  * @param tree Pointer to a red-black tree.
  */
 
 void rbtree_destroy(rb_tree * tree);
+
+/**
+ * @brief Set free function to dispose elements
+ *
+ * rbtree_destroy and rbtree_delete will call this function for each element
+ * that they take out from the tree.
+ *
+ * @param tree Pointer to a red-black tree.
+ * @param dispose Pointer to function to dispose an element.
+ */
+
+void rbtree_set_dispose(rb_tree * tree, void (*dispose)(void *));
 
 /**
  * @brief Insert a key-value in the tree
